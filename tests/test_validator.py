@@ -5,6 +5,7 @@ import sys
 import os
 from pathlib import Path
 
+from model_provenance_validator.packet import validate_proof_surface_packet
 from model_provenance_validator.validator import load_envelope, load_schema, validate_envelope
 
 
@@ -45,3 +46,49 @@ def test_module_cli_returns_nonzero_for_invalid_envelope() -> None:
 
     assert result.returncode == 1
     assert "invalid" in result.stdout
+
+
+def test_valid_proof_surface_packet_passes_validation() -> None:
+    packet = {
+        "proof_surface_version": "0.1",
+        "packet_id": "model-provenance-validator-batch",
+        "surface": "model provenance validation",
+        "status": "ready",
+        "claims": [
+            {
+                "claim": "Model/reference claims carry provenance envelopes.",
+                "evidence": "total envelopes=1",
+            }
+        ],
+        "checks": [
+            {
+                "tool": "model-provenance-validator",
+                "status": "pass",
+                "summary": "valid=1, invalid=0, errors=0",
+            }
+        ],
+        "action_items": [],
+    }
+
+    assert validate_proof_surface_packet(packet) == []
+
+
+def test_module_cli_emits_proof_packet_for_valid_envelope() -> None:
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(Path(__file__).parents[1] / "src")
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "model_provenance_validator",
+            str(FIXTURES / "valid.json"),
+            "--proof-packet",
+        ],
+        check=False,
+        capture_output=True,
+        env=env,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "proof_surface_version" in result.stdout
