@@ -1,13 +1,15 @@
 # model-provenance-validator
 
-`model-provenance-validator` validates compact JSON envelopes that describe
-where model reference claims came from and how they were checked.
+`model-provenance-validator` keeps model and release claims attached to small,
+checkable provenance envelopes. It validates the JSON shape that says what the
+claim is about, where the reference came from, when it was retrieved, and what
+validation status a maintainer is willing to publish.
 
 The package has no runtime dependencies. It includes a small schema validator
 for the envelope shape used by the CLI.
 
-Use it when a README, report, model card note, release packet, or AI workflow
-claim needs a small provenance envelope before the claim is repeated publicly.
+Use it when a README, report, model-card note, release packet, or AI workflow
+claim needs a source reference before the claim is repeated publicly.
 
 ## Install
 
