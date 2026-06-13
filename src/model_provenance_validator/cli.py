@@ -26,6 +26,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Print a batch validation summary instead of per-file detail.",
     )
+    parser.add_argument(
+        "--proof-packet",
+        action="store_true",
+        help="Print a proof-surface interop packet as JSON.",
+    )
     return parser
 
 
@@ -73,6 +78,43 @@ def _format_summary(summary: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def _proof_surface_packet(results: list[dict[str, Any]]) -> dict[str, Any]:
+    summary = _summarize_results(results)
+    status = "ready" if summary["invalid"] == 0 else "blocked"
+    check_status = "pass" if summary["invalid"] == 0 else "fail"
+    return {
+        "proof_surface_version": "0.1",
+        "packet_id": "model-provenance-validator-batch",
+        "surface": "model provenance validation",
+        "status": status,
+        "claims": [
+            {
+                "claim": "Model/reference claims carry provenance envelopes.",
+                "evidence": f"total envelopes={summary['total']}",
+            },
+            {
+                "claim": "Envelope structure is validated before publication.",
+                "evidence": f"valid={summary['valid']}, invalid={summary['invalid']}",
+            },
+            {
+                "claim": "Invalid provenance is converted into action items.",
+                "evidence": f"validation errors={summary['error_count']}",
+            },
+        ],
+        "checks": [
+            {
+                "tool": "model-provenance-validator",
+                "status": check_status,
+                "summary": (
+                    f"valid={summary['valid']}, invalid={summary['invalid']}, "
+                    f"errors={summary['error_count']}"
+                ),
+            }
+        ],
+        "action_items": summary["action_items"],
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     schema, schema_error = _load_schema_or_error(args.schema)
@@ -83,7 +125,9 @@ def main(argv: list[str] | None = None) -> int:
     results = [_validate_path(path, schema) for path in args.envelopes]
     has_errors = any(not result["valid"] for result in results)
 
-    if args.summary:
+    if args.proof_packet:
+        print(json.dumps(_proof_surface_packet(results), indent=2))
+    elif args.summary:
         summary = _summarize_results(results)
         print(json.dumps(summary, indent=2) if args.json else _format_summary(summary))
     elif args.json:

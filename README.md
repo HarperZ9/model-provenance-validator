@@ -29,6 +29,7 @@ model-provenance-validator envelope.json
 model-provenance-validator envelope.json --json
 model-provenance-validator *.provenance.json --summary
 model-provenance-validator *.provenance.json --summary --json
+model-provenance-validator *.provenance.json --proof-packet
 model-provenance-validator *.provenance.json
 ```
 
@@ -125,6 +126,17 @@ invalid: 1
 error_count: 1
 action_items:
 - draft.provenance.json: resolve 1 validation error(s)
+```
+
+## Proof-surface packet output
+
+Use `--proof-packet` when provenance validation should feed `repo-proof-index`
+or a release-readiness report. The packet follows the shared proof-surface
+interop shape: claims, checks, and action items in one JSON object.
+
+```bash
+model-provenance-validator *.provenance.json --proof-packet > provenance.packet.json
+repo-proof-index provenance.packet.json --summary
 ```
 
 ## What it validates
