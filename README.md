@@ -27,10 +27,14 @@ python -m pytest
 ```bash
 model-provenance-validator envelope.json
 model-provenance-validator envelope.json --json
+model-provenance-validator *.provenance.json --summary
+model-provenance-validator *.provenance.json --summary --json
 model-provenance-validator *.provenance.json
 ```
 
-The command exits with status `1` when any envelope fails validation.
+The command exits with status `1` when any envelope fails validation. Malformed
+or unreadable envelope files are reported as invalid results so batch runs can
+continue and produce a complete action list.
 
 Use a custom schema:
 
@@ -110,6 +114,17 @@ draft.provenance.json: invalid
     "errors": []
   }
 ]
+```
+
+## Example summary output
+
+```text
+total: 3
+valid: 2
+invalid: 1
+error_count: 1
+action_items:
+- draft.provenance.json: resolve 1 validation error(s)
 ```
 
 ## What it validates
