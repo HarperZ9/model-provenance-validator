@@ -132,7 +132,9 @@ action_items:
 
 Use `--proof-packet` when provenance validation should feed `repo-proof-index`
 or a release-readiness report. The packet follows the shared proof-surface
-interop shape: claims, checks, and action items in one JSON object.
+interop shape: claims, checks, and action items in one JSON object. The generated
+packet is self-checked before printing so producer drift fails before entering
+the pipeline.
 
 ```bash
 model-provenance-validator *.provenance.json --proof-packet > provenance.packet.json

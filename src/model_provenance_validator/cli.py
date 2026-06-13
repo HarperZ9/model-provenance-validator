@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
+from .packet import validate_proof_surface_packet
 from .validator import DEFAULT_SCHEMA, load_envelope, load_schema, validate_envelope
 
 
@@ -126,7 +128,14 @@ def main(argv: list[str] | None = None) -> int:
     has_errors = any(not result["valid"] for result in results)
 
     if args.proof_packet:
-        print(json.dumps(_proof_surface_packet(results), indent=2))
+        packet = _proof_surface_packet(results)
+        issues = validate_proof_surface_packet(packet)
+        if issues:
+            print("error: generated proof-surface packet failed validation", file=sys.stderr)
+            for issue in issues:
+                print(f"  {issue}", file=sys.stderr)
+            return 1
+        print(json.dumps(packet, indent=2))
     elif args.summary:
         summary = _summarize_results(results)
         print(json.dumps(summary, indent=2) if args.json else _format_summary(summary))
