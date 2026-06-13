@@ -5,12 +5,12 @@ build-backend = "hatchling.build"
 [project]
 name = "model-provenance-validator"
 version = "0.1.0"
-description = "Dependency-light model provenance envelope validator"
+description = "Dependency-light provenance envelope validator for model and release claims"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "Zain Dana Harper" }]
-keywords = ["model", "provenance", "schema", "cli"]
+keywords = ["model", "provenance", "claims", "schema", "cli"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Console",
@@ -31,4 +31,3 @@ model-provenance-validator = "model_provenance_validator.cli:main"
 addopts = "-q"
 pythonpath = ["src"]
 testpaths = ["tests"]
-
