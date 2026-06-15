@@ -41,6 +41,31 @@ def test_retrieved_at_requires_iso_date_shape() -> None:
     ) in messages
 
 
+def test_retrieved_at_requires_calendar_date() -> None:
+    envelope = load_envelope(FIXTURES / "valid.json")
+    envelope["references"][0]["retrieved_at"] = "2026-99-99"
+
+    errors = validate_envelope(envelope, load_schema())
+    messages = {(error.path, error.message) for error in errors}
+
+    assert (
+        "$.references[0].retrieved_at",
+        "expected valid calendar date",
+    ) in messages
+
+
+def test_invalid_values_are_redacted_in_errors() -> None:
+    envelope = load_envelope(FIXTURES / "valid.json")
+    synthetic = "ghp_" + ("A" * 36)
+    envelope["source"]["kind"] = f"token={synthetic}"
+
+    errors = validate_envelope(envelope, load_schema())
+    rendered = "\n".join(error.message for error in errors)
+
+    assert "ghp_" not in rendered
+    assert "<redacted>" in rendered
+
+
 def test_module_cli_returns_nonzero_for_invalid_envelope() -> None:
     env = os.environ.copy()
     env["PYTHONPATH"] = str(Path(__file__).parents[1] / "src")
@@ -59,6 +84,7 @@ def test_module_cli_returns_nonzero_for_invalid_envelope() -> None:
 
     assert result.returncode == 1
     assert "invalid" in result.stdout
+    assert str(FIXTURES) not in result.stdout
 
 
 def test_valid_proof_surface_packet_passes_validation() -> None:
@@ -84,6 +110,23 @@ def test_valid_proof_surface_packet_passes_validation() -> None:
     }
 
     assert validate_proof_surface_packet(packet) == []
+
+
+def test_empty_claims_and_checks_are_invalid() -> None:
+    packet = {
+        "proof_surface_version": "0.1",
+        "packet_id": "empty",
+        "surface": "model provenance validation",
+        "status": "unknown",
+        "claims": [],
+        "checks": [],
+        "action_items": [],
+    }
+
+    issues = set(validate_proof_surface_packet(packet))
+
+    assert "$.claims: expected at least 1 item(s)" in issues
+    assert "$.checks: expected at least 1 item(s)" in issues
 
 
 def test_module_cli_emits_proof_packet_for_valid_envelope() -> None:

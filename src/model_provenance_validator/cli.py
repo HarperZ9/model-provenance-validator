@@ -3,12 +3,11 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
 from .packet import validate_proof_surface_packet
-from .validator import DEFAULT_SCHEMA, load_envelope, load_schema, validate_envelope
+from .validator import DEFAULT_SCHEMA, load_envelope, load_schema, scrub_text, validate_envelope
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -36,21 +35,29 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _display_path(path: Path, base: Path | None = None) -> str:
+    base = (base or Path.cwd()).resolve()
+    try:
+        return path.resolve().relative_to(base).as_posix()
+    except (OSError, ValueError):
+        return path.name
+
+
 def _load_schema_or_error(path: Path) -> tuple[dict[str, Any] | None, str | None]:
     try:
         return load_schema(path), None
     except (FileNotFoundError, OSError, ValueError, json.JSONDecodeError) as exc:
-        return None, str(exc)
+        return None, scrub_text(str(exc))
 
 
 def _validate_path(path: Path, schema: dict[str, Any]) -> dict[str, Any]:
     try:
         errors = validate_envelope(load_envelope(path), schema)
     except (FileNotFoundError, OSError, ValueError, json.JSONDecodeError) as exc:
-        errors = [{"path": "$", "message": str(exc)}]
+        errors = [{"path": "$", "message": scrub_text(str(exc))}]
     else:
-        errors = [asdict(error) for error in errors]
-    return {"path": str(path), "valid": not errors, "errors": errors}
+        errors = [{"path": error.path, "message": scrub_text(error.message)} for error in errors]
+    return {"path": _display_path(path), "valid": not errors, "errors": errors}
 
 
 def _summarize_results(results: list[dict[str, Any]]) -> dict[str, Any]:

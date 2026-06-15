@@ -76,6 +76,8 @@ def _validate_claims(value: Any, issues: list[str]) -> None:
     if not isinstance(value, list):
         issues.append("$.claims: expected array")
         return
+    if not value:
+        issues.append("$.claims: expected at least 1 item(s)")
     for index, item in enumerate(value):
         if not isinstance(item, dict):
             issues.append(f"$.claims[{index}]: expected object")
@@ -89,6 +91,8 @@ def _validate_checks(value: Any, issues: list[str]) -> None:
     if not isinstance(value, list):
         issues.append("$.checks: expected array")
         return
+    if not value:
+        issues.append("$.checks: expected at least 1 item(s)")
     for index, item in enumerate(value):
         if not isinstance(item, dict):
             issues.append(f"$.checks[{index}]: expected object")
