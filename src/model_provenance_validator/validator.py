@@ -3,17 +3,44 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
+from datetime import date
 from importlib import resources
 from pathlib import Path
 from typing import Any
 
 DEFAULT_SCHEMA = resources.files(__package__) / "schema.json"
+MAX_MESSAGE_LENGTH = 240
+REDACTION_PATTERNS = (
+    re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----.*?-----END [A-Z ]*PRIVATE KEY-----", re.S),
+    re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
+    re.compile(r"\bASIA[0-9A-Z]{16}\b"),
+    re.compile(r"\bghp_[A-Za-z0-9_]{20,}\b"),
+    re.compile(r"\bgithub_pat_[A-Za-z0-9_]{20,}\b"),
+    re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b"),
+    re.compile(r"(?i)\b(bearer|token|api[_-]?key|password|secret)\s*[:=]\s*\S+"),
+    re.compile(r"\b[A-Za-z]:\\[^\s'\"<>]+"),
+    re.compile(r"(?<!\w)/(?:Users|home|tmp|dev|var|etc)/[^\s'\"<>]+"),
+)
 
 
 @dataclass(frozen=True)
 class ValidationError:
     path: str
     message: str
+
+
+def scrub_text(value: str, max_length: int = MAX_MESSAGE_LENGTH) -> str:
+    text = value.replace("\x00", " ")
+    for pattern in REDACTION_PATTERNS:
+        text = pattern.sub("<redacted>", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    if len(text) > max_length:
+        text = text[: max_length - 3].rstrip() + "..."
+    return text
+
+
+def _safe_repr(value: Any) -> str:
+    return repr(scrub_text(value) if isinstance(value, str) else value)
 
 
 def load_schema(path: str | Path = DEFAULT_SCHEMA) -> dict[str, Any]:
@@ -35,7 +62,24 @@ def load_envelope(path: str | Path) -> dict[str, Any]:
 def validate_envelope(envelope: dict[str, Any], schema: dict[str, Any]) -> list[ValidationError]:
     errors: list[ValidationError] = []
     _validate_value("$", envelope, schema, errors)
+    _validate_reference_dates(envelope, errors)
     return errors
+
+
+def _validate_reference_dates(envelope: dict[str, Any], errors: list[ValidationError]) -> None:
+    references = envelope.get("references")
+    if not isinstance(references, list):
+        return
+    for index, item in enumerate(references):
+        if not isinstance(item, dict):
+            continue
+        value = item.get("retrieved_at")
+        if not isinstance(value, str) or re.fullmatch(r"\d{4}-\d{2}-\d{2}", value) is None:
+            continue
+        try:
+            date.fromisoformat(value)
+        except ValueError:
+            errors.append(ValidationError(f"$.references[{index}].retrieved_at", "expected valid calendar date"))
 
 
 def _validate_object(
@@ -108,7 +152,7 @@ def _validate_value(
 
     if "enum" in rules and value not in rules["enum"]:
         allowed = ", ".join(str(item) for item in rules["enum"])
-        errors.append(ValidationError(path, f"invalid value {value!r}; expected one of: {allowed}"))
+        errors.append(ValidationError(path, f"invalid value {_safe_repr(value)}; expected one of: {allowed}"))
 
     if "const" in rules and value != rules["const"]:
-        errors.append(ValidationError(path, f"invalid value {value!r}; expected {rules['const']!r}"))
+        errors.append(ValidationError(path, f"invalid value {_safe_repr(value)}; expected {rules['const']!r}"))

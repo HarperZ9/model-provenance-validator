@@ -37,7 +37,9 @@ model-provenance-validator *.provenance.json
 
 The command exits with status `1` when any envelope fails validation. Malformed
 or unreadable envelope files are reported as invalid results so batch runs can
-continue and produce a complete action list.
+continue and produce a complete action list. Result paths are printed relative
+to the current directory when possible, and validation messages redact
+credential-shaped strings and local absolute paths.
 
 Use a custom schema:
 
@@ -75,7 +77,8 @@ Allowed `validation.status` values:
 - `partial`
 - `unknown`
 
-Each `references[].retrieved_at` value must use `YYYY-MM-DD` date shape.
+Each `references[].retrieved_at` value must use `YYYY-MM-DD` date shape and be
+a valid calendar date.
 
 ## Minimal valid envelope
 
@@ -153,6 +156,7 @@ repo-proof-index provenance.packet.json --summary
 - exact constants such as `envelope_version: "1"`;
 - enum values for source kind and validation status;
 - string pattern constraints such as `references[].retrieved_at`;
+- calendar-date validation for `references[].retrieved_at`;
 - unexpected fields when `additionalProperties` is false.
 
 ## What it does not do
