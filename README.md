@@ -75,6 +75,8 @@ Allowed `validation.status` values:
 - `partial`
 - `unknown`
 
+Each `references[].retrieved_at` value must use `YYYY-MM-DD` date shape.
+
 ## Minimal valid envelope
 
 ```json
@@ -150,6 +152,7 @@ repo-proof-index provenance.packet.json --summary
 - non-empty string fields where required;
 - exact constants such as `envelope_version: "1"`;
 - enum values for source kind and validation status;
+- string pattern constraints such as `references[].retrieved_at`;
 - unexpected fields when `additionalProperties` is false.
 
 ## What it does not do

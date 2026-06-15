@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from importlib import resources
 from pathlib import Path
@@ -101,6 +102,9 @@ def _validate_value(
             return
         if len(value) < int(rules.get("minLength", 0)):
             errors.append(ValidationError(path, "expected non-empty string"))
+        pattern = rules.get("pattern")
+        if isinstance(pattern, str) and re.fullmatch(pattern, value) is None:
+            errors.append(ValidationError(path, f"expected string matching pattern {pattern!r}"))
 
     if "enum" in rules and value not in rules["enum"]:
         allowed = ", ".join(str(item) for item in rules["enum"])
@@ -108,4 +112,3 @@ def _validate_value(
 
     if "const" in rules and value != rules["const"]:
         errors.append(ValidationError(path, f"invalid value {value!r}; expected {rules['const']!r}"))
-
