@@ -28,6 +28,19 @@ def test_invalid_envelope_reports_specific_errors() -> None:
     assert ("$.validation.extra", "unexpected field") in messages
 
 
+def test_retrieved_at_requires_iso_date_shape() -> None:
+    envelope = load_envelope(FIXTURES / "valid.json")
+    envelope["references"][0]["retrieved_at"] = "June 13, 2026"
+
+    errors = validate_envelope(envelope, load_schema())
+    messages = {(error.path, error.message) for error in errors}
+
+    assert (
+        "$.references[0].retrieved_at",
+        "expected string matching pattern '\\\\d{4}-\\\\d{2}-\\\\d{2}'",
+    ) in messages
+
+
 def test_module_cli_returns_nonzero_for_invalid_envelope() -> None:
     env = os.environ.copy()
     env["PYTHONPATH"] = str(Path(__file__).parents[1] / "src")
