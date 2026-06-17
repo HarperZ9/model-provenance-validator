@@ -12,6 +12,21 @@ from model_provenance_validator.validator import load_envelope, load_schema, val
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
+def _subprocess_env() -> dict[str, str]:
+    """Env for spawned CLI runs: this repo's src plus any inherited PYTHONPATH.
+
+    The CLI now imports the shared ``proof_surface`` package, so the child
+    interpreter must be able to resolve it the same way the parent run can
+    (via an installed ``proof-surface>=0.1`` dependency or an inherited
+    PYTHONPATH). We prepend this repo's ``src`` and preserve the rest.
+    """
+    env = os.environ.copy()
+    src = str(Path(__file__).parents[1] / "src")
+    inherited = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = os.pathsep.join(part for part in (src, inherited) if part)
+    return env
+
+
 def test_valid_envelope_passes() -> None:
     errors = validate_envelope(load_envelope(FIXTURES / "valid.json"), load_schema())
 
@@ -67,8 +82,7 @@ def test_invalid_values_are_redacted_in_errors() -> None:
 
 
 def test_module_cli_returns_nonzero_for_invalid_envelope() -> None:
-    env = os.environ.copy()
-    env["PYTHONPATH"] = str(Path(__file__).parents[1] / "src")
+    env = _subprocess_env()
     result = subprocess.run(
         [
             sys.executable,
@@ -130,8 +144,7 @@ def test_empty_claims_and_checks_are_invalid() -> None:
 
 
 def test_module_cli_emits_proof_packet_for_valid_envelope() -> None:
-    env = os.environ.copy()
-    env["PYTHONPATH"] = str(Path(__file__).parents[1] / "src")
+    env = _subprocess_env()
     result = subprocess.run(
         [
             sys.executable,
