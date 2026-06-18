@@ -1,4 +1,12 @@
-# model-provenance-validator
+# Model Provenance Validator
+
+> Validate provenance envelopes; redact secret-shaped values out of its own output.
+
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![python](https://img.shields.io/badge/python-3.11%2B-blue.svg)
+![version](https://img.shields.io/badge/version-0.1.1-informational.svg)
+[![CI](https://github.com/HarperZ9/model-provenance-validator/actions/workflows/ci.yml/badge.svg)](https://github.com/HarperZ9/model-provenance-validator/actions/workflows/ci.yml)
+[![part of: AI-accountability toolkit](https://img.shields.io/badge/part_of-AI--accountability_toolkit-7a5cff.svg)](https://harperz9.github.io)
 
 `model-provenance-validator` keeps model and release claims attached to small,
 checkable provenance envelopes. It validates the JSON shape that says what the
@@ -179,7 +187,7 @@ claim -> source reference -> provenance envelope -> validation result -> proof i
 Its job is to keep model/reference claims from floating without a source,
 retrieval date, and validation status.
 
-## Authorship
-
-Created and maintained by Zain Dana Harper. Claude Code contributed to the
-initial implementation.
+---
+**Zain Dana Harper** — small tools with explicit edges.
+[Portfolio](https://harperz9.github.io) · [HarperZ9](https://github.com/HarperZ9)
+<sub>Built with Claude Code; reviewed, tested, and owned by me.</sub>
