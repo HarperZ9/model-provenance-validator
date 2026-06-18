@@ -3,7 +3,7 @@
 > Validate provenance envelopes; redact secret-shaped values out of its own output.
 
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![python](https://img.shields.io/badge/python-3.11%2B-blue.svg)
+![python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
 ![version](https://img.shields.io/badge/version-0.1.1-informational.svg)
 [![CI](https://github.com/HarperZ9/model-provenance-validator/actions/workflows/ci.yml/badge.svg)](https://github.com/HarperZ9/model-provenance-validator/actions/workflows/ci.yml)
 [![part of: AI-accountability toolkit](https://img.shields.io/badge/part_of-AI--accountability_toolkit-7a5cff.svg)](https://harperz9.github.io)
@@ -13,8 +13,9 @@ checkable provenance envelopes. It validates the JSON shape that says what the
 claim is about, where the reference came from, when it was retrieved, and what
 validation status a maintainer is willing to publish.
 
-The package has no runtime dependencies. It includes a small schema validator
-for the envelope shape used by the CLI.
+The package includes a small schema validator for the envelope shape used by
+the CLI. Its one runtime dependency is `proof-surface`, the shared package that
+owns the proof-surface packet contract emitted by `--proof-packet`.
 
 Use it when a README, report, model-card note, release packet, or AI workflow
 claim needs a source reference before the claim is repeated publicly.
@@ -33,6 +34,9 @@ python -m pytest
 ```
 
 ## Usage
+
+See [USAGE.md](USAGE.md) for an install line, the full CLI/API surface, and
+worked examples with expected output.
 
 ```bash
 model-provenance-validator envelope.json
