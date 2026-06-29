@@ -1,5 +1,40 @@
 # Model Provenance Validator
 
+![Model Provenance Validator hero](docs/brand/model-provenance-validator-hero.png)
+
+> Validate model and release claims against small provenance envelopes.
+
+Model Provenance Validator checks the JSON envelope that says what a claim is
+about, where its source came from, when it was retrieved, and what validation
+status can be published. It redacts credential-shaped values from its own output.
+
+## Why it matters
+
+Model cards, README claims, release notes, and agent reports become fragile when
+source references are informal. This tool makes the reference shape explicit
+enough to validate, summarize, and hand off.
+
+## Try it
+
+```bash
+python -m pip install -e ".[test]"
+model-provenance-validator examples/envelopes/release.provenance.json
+python -m pytest
+```
+
+## What to test first
+
+- Validate `examples/envelopes/release.provenance.json`.
+- Run `model-provenance-validator *.provenance.json --summary --json`.
+- Emit a proof packet with `--proof-packet`.
+
+## Current status
+
+Python package and CLI with proof-surface integration. It validates envelope
+shape and report hygiene; it does not certify the underlying claim.
+
+## Existing technical notes
+
 > Validate provenance envelopes; redact secret-shaped values out of its own output.
 
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
