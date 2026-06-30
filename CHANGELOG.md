@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Refreshes GitHub Actions workflows to current first-party action majors and
+  removes the temporary Node runtime forcing workaround.
 - Adds schema `pattern` support and requires `references[].retrieved_at` to use
   `YYYY-MM-DD` date shape.
 - Requires `references[].retrieved_at` to be a valid calendar date.

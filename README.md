@@ -227,8 +227,8 @@ Its job is to keep model/reference claims from floating without a source,
 retrieval date, and validation status.
 
 ---
-**Zain Dana Harper** — small tools with explicit edges.
-[Portfolio](https://harperz9.github.io) · [HarperZ9](https://github.com/HarperZ9)
+**Zain Dana Harper** -- small tools with explicit edges.
+[Portfolio](https://harperz9.github.io) | [HarperZ9](https://github.com/HarperZ9)
 <sub>Built with Claude Code; reviewed, tested, and owned by me.</sub>
 
 ## For developers
