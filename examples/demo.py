@@ -1,4 +1,4 @@
-"""Best-effort demo — not runtime-verified by author.
+"""Best-effort demo -- not runtime-verified by author.
 
 End-to-end demo of the model-provenance-validator Python API.
 
