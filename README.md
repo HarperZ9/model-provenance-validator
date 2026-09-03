@@ -1,8 +1,6 @@
-<p align="center"><img src=".github/assets/zentropy-banner.png" alt="model-provenance-validator" width="100%"></p>
+<p align="center"><img src="docs/art/model-provenance-validator-header.svg" alt="Model Provenance Validator" width="100%"></p>
 
 # Model Provenance Validator
-
-![Model Provenance Validator hero](docs/brand/model-provenance-validator-hero.png)
 
 > Validate model and release claims against small provenance envelopes.
 
@@ -102,6 +100,8 @@ Run the bundled example:
 model-provenance-validator examples/envelopes/release.provenance.json
 ```
 
+![Eight stages of validating one provenance envelope: envelope, root shape, subject and source, references, calendar check, validation block, scrub, and exit code. An envelope is a single JSON object with five required fields. The root refuses unexpected fields by naming them rather than ignoring them, and the same rule applies to every nested object at every depth. Subject says which claim the envelope is about; source says what kind of thing it came from, drawn from five kinds: official documentation, a paper, a release note, a local fixture, or other. References must carry at least one entry, and each entry needs a name, a locator, and a retrieval date. The date is checked twice: once against the ten-character pattern and once against the calendar, so a well-shaped date that never existed is still an error. The validation block carries a status of verified, partial, or unknown. Every message is scrubbed before it is printed. A batch exits zero only when nothing in it was invalid. Three outcomes: valid, invalid, and no schema.](docs/art/envelope-lane.svg)
+
 ## Envelope shape
 
 Required top-level fields:
@@ -184,6 +184,8 @@ action_items:
 - draft.provenance.json: resolve 1 validation error(s)
 ```
 
+![Eight stages of a batch run: batch, per file, tally, action items, status, packet, self-check, and handoff. One command takes many envelope files. A file that cannot be read, or that is not JSON, becomes a single error attached to the root rather than a crash, so it still counts toward the tally. The tally records four numbers: total, valid, invalid, and the total error count. Action items are one line per invalid file, capped at the first eight, so a large broken batch produces a readable list rather than a wall. Status is ready when nothing was invalid and blocked otherwise. The packet carries three claims and one check. Before printing, the packet is validated against the shared proof-surface contract, and a packet that fails that check is written to standard error rather than standard output. The result is readable by the proof index without this tool present. Three outcomes: ready, blocked, and not printed.](docs/art/packet-lane.svg)
+
 ## Proof-surface packet output
 
 Use `--proof-packet` when provenance validation should feed `repo-proof-index`
@@ -207,6 +209,8 @@ repo-proof-index provenance.packet.json --summary
 - string pattern constraints such as `references[].retrieved_at`;
 - calendar-date validation for `references[].retrieved_at`;
 - unexpected fields when `additionalProperties` is false.
+
+![Eleven redaction rules, one to a row, with what each shape becomes and why it is on the list. A null byte becomes a space, and it is replaced first so nothing downstream can be split by it. A private key block is redacted from its opening line to its closing line, the only rule that spans more than one line. Cloud access key ids are matched by two prefixes and sixteen uppercase characters. Three token prefixes are matched by shape, each requiring twenty characters or more so that a short lookalike is left alone. The accented row is the named-secret rule: bearer, token, api key, password or secret in any case, followed by a colon or an equals sign, which is the only rule that catches a secret whose shape nobody has catalogued in advance. Two path rules remove drive-letter paths and six absolute prefixes below the root, with the second written so that a URL path is not swept up. Whitespace is collapsed after redaction, never before, which is a real gap: a token broken across two lines matches no prefix rule and survives, and the row says so. Messages over two hundred and forty characters are cut at two hundred and thirty-seven and closed with an ellipsis, and because truncation runs last, a long message is redacted before any of it is discarded.](docs/art/redaction-rules.svg)
 
 ## What it does not do
 
