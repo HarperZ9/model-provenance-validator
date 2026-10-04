@@ -1,8 +1,20 @@
-<p align="center"><img src="docs/art/model-provenance-validator-header.svg" alt="Model Provenance Validator" width="100%"></p>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/HarperZ9/model-provenance-validator/main/docs/art/hero-dark.svg">
+  <img src="https://raw.githubusercontent.com/HarperZ9/model-provenance-validator/main/docs/art/hero-light.svg" alt="model-provenance-validator: Validate model and release claims against small provenance envelopes. A chain of small linked squares, each holding a few ruled lines, winds inward to a bright core." width="100%">
+</picture>
 
-# Model Provenance Validator
+# model-provenance-validator
 
-> Validate model and release claims against small provenance envelopes.
+Validate model and release claims against small provenance envelopes.
+
+```
+python -m pip install -e ".[test]"
+```
+
+[![version: 0.1.1](https://img.shields.io/badge/version-0.1.1-e6e1d6?style=flat-square&labelColor=1a1712)](https://pypi.org/project/model-provenance-validator/)
+[![CI](https://github.com/HarperZ9/model-provenance-validator/actions/workflows/ci.yml/badge.svg)](https://github.com/HarperZ9/model-provenance-validator/actions/workflows/ci.yml)
+[![license](https://img.shields.io/badge/license-MIT-e6e1d6?style=flat-square&labelColor=1a1712)](https://github.com/HarperZ9/model-provenance-validator/blob/main/LICENSE)
+![python 3.10+](https://img.shields.io/badge/python-3.10%2B-e6e1d6?style=flat-square&labelColor=1a1712)
 
 Model Provenance Validator checks the JSON envelope that says what a claim is
 about, where its source came from, when it was retrieved, and what validation
