@@ -121,6 +121,14 @@ footer.foot p{max-width:70ch;margin:0 0 .6rem}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-duration:0s!important;animation-duration:0s!important;animation-iteration-count:1!important;scroll-behavior:auto!important}
 }
+.film{margin:1rem 0 0;max-width:56rem}
+.film video{width:100%;height:auto;display:block;background:#000;border:1px solid var(--line)}
+.film figcaption{font-size:.9rem;color:var(--ink-soft);margin-top:.55rem;max-width:44rem;line-height:1.5}
+.soon{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);margin-top:.8rem}
+ol.walkthrough{padding-left:1.4rem;max-width:56rem;margin:1rem 0 0}
+ol.walkthrough li{margin:0 0 1.4rem}
+ol.walkthrough h3{margin:0 0 .3rem;font-size:1.05rem}
+ol.walkthrough p{margin:0 0 .3rem;max-width:44rem}
 
 /* generic scene kit: a pipeline strip, an input/output panel, a case picker, a table */
 .kscene{display:flex;flex-direction:column;gap:.8rem}
@@ -174,6 +182,12 @@ footer.foot p{max-width:70ch;margin:0 0 .6rem}
   <p class="src">Source: <a href="https://github.com/HarperZ9/model-provenance-validator/blob/1da6150ada42fdb3751143bc502aedd785ffcd24/README.md">README.md</a> at 1da6150 (version 0.1.1)</p>
 </section>
 
+<section class="block wrap" aria-labelledby="watch">
+  <h2 id="watch">Watch</h2>
+  <p class="measure">No concept film fits this tool closely yet. The walkthrough below covers it in text, with real commands and output.</p>
+  <p class="soon">Video walkthrough: coming with the next release.</p>
+</section>
+
 <section class="block wrap" aria-labelledby="how">
   <h2 id="how">How it works, one step at a time</h2>
   <p class="measure">Scroll, or use the step buttons. The panel uses the bundled example envelope and the repository's invalid test fixture. Every line is output from model-provenance-validator at commit 1da6150.</p>
@@ -223,13 +237,31 @@ footer.foot p{max-width:70ch;margin:0 0 .6rem}
   </div>
 </section>
 
-<section class="block wrap" aria-labelledby="try">
-  <h2 id="try">Try it</h2>
-  <div class="measure"><p>Install from PyPI (Python 3.10 or newer).</p></div>
+<section class="block wrap" aria-labelledby="walkthrough">
+  <h2 id="walkthrough">Walkthrough</h2>
+  <p class="measure">Install it, run it once, then use the main feature. Each command below is real, and so is its output.</p>
+  <ol class="walkthrough">
+    <li><h3>Install</h3><p>Install from PyPI and clone for the examples. Python 3.10 or newer.</p>
 <pre class="cmd"><code>$ python -m pip install model-provenance-validator
-$ git clone https://github.com/HarperZ9/model-provenance-validator && cd model-provenance-validator
-$ model-provenance-validator examples/envelopes/release.provenance.json
-<span class="out">examples/envelopes/release.provenance.json: valid</span></code></pre>
+$ git clone https://github.com/HarperZ9/model-provenance-validator && cd model-provenance-validator</code></pre></li>
+    <li><h3>First run: a valid envelope</h3><p>Validate the bundled release envelope.</p>
+<pre class="cmd"><code>$ model-provenance-validator examples/envelopes/release.provenance.json
+<span class="out">examples/envelopes/release.provenance.json: valid</span></code></pre></li>
+    <li><h3>An invalid envelope</h3><p>Each problem is named.</p>
+<pre class="cmd"><code>$ model-provenance-validator tests/fixtures/invalid.json
+<span class="out">tests/fixtures/invalid.json: invalid
+  $.subject: expected non-empty string
+  $.source.kind: invalid value &#x27;unknown-kind&#x27;; expected one of: official-doc, paper, release-note, local-fixture, other
+  $.references: expected at least 1 item(s)
+  $.validation.extra: unexpected field</span></code></pre></li>
+    <li><h3>A proof packet</h3><p>Write the result as a packet.</p>
+<pre class="cmd"><code>$ model-provenance-validator examples/envelopes/release.provenance.json --proof-packet
+<span class="out">&quot;surface&quot;: &quot;model provenance validation&quot;
+&quot;status&quot;: &quot;ready&quot;
+&quot;claims&quot;: envelopes=1; valid=1, invalid=0; validation errors=0
+&quot;checks&quot;: [{&quot;tool&quot;: &quot;model-provenance-validator&quot;, &quot;status&quot;: &quot;pass&quot;, &quot;summary&quot;: &quot;valid=1, invalid=0, errors=0&quot;}]
+&quot;action_items&quot;: []</span></code></pre></li>
+  </ol>
   <p class="src">Output from model-provenance-validator at 1da6150 run from source; version 0.1.1 is the current PyPI release.</p>
 </section>
 
