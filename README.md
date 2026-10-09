@@ -26,6 +26,52 @@ The [animated explainer](https://harperz9.github.io/repo-explainers/model-proven
 walks through the bundled envelope validated, the invalid fixture's four errors with their paths, a refused status word, and a batch summary and proof packet. Every value on it is output from this repository. Its
 source is [docs/explainer/index.html](docs/explainer/index.html).
 
+## Watch
+
+No concept film fits this tool closely yet. The walkthrough below covers it in text, with real commands and output.
+
+Video walkthrough: coming with the next release.
+
+## Walkthrough
+
+Install it, run it once, then use the main feature. Each command below is real, and so is its output.
+
+1. **Install.** Install from PyPI and clone for the examples. Python 3.10 or newer.
+
+   ```text
+   $ python -m pip install model-provenance-validator
+   $ git clone https://github.com/HarperZ9/model-provenance-validator && cd model-provenance-validator
+   ```
+
+2. **First run: a valid envelope.** Validate the bundled release envelope.
+
+   ```text
+   $ model-provenance-validator examples/envelopes/release.provenance.json
+   examples/envelopes/release.provenance.json: valid
+   ```
+
+3. **An invalid envelope.** Each problem is named.
+
+   ```text
+   $ model-provenance-validator tests/fixtures/invalid.json
+   tests/fixtures/invalid.json: invalid
+     $.subject: expected non-empty string
+     $.source.kind: invalid value 'unknown-kind'; expected one of: official-doc, paper, release-note, local-fixture, other
+     $.references: expected at least 1 item(s)
+     $.validation.extra: unexpected field
+   ```
+
+4. **A proof packet.** Write the result as a packet.
+
+   ```text
+   $ model-provenance-validator examples/envelopes/release.provenance.json --proof-packet
+   "surface": "model provenance validation"
+   "status": "ready"
+   "claims": envelopes=1; valid=1, invalid=0; validation errors=0
+   "checks": [{"tool": "model-provenance-validator", "status": "pass", "summary": "valid=1, invalid=0, errors=0"}]
+   "action_items": []
+   ```
+
 ## Why it matters
 
 Model cards, README claims, release notes, and agent reports become fragile when
