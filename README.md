@@ -20,6 +20,12 @@ Model Provenance Validator checks the JSON envelope that says what a claim is
 about, where its source came from, when it was retrieved, and what validation
 status can be published. It redacts credential-shaped values from its own output.
 
+## See it work, step by step
+
+The [animated explainer](https://harperz9.github.io/repo-explainers/model-provenance-validator.html)
+walks through the bundled envelope validated, the invalid fixture's four errors with their paths, a refused status word, and a batch summary and proof packet. Every value on it is output from this repository. Its
+source is [docs/explainer/index.html](docs/explainer/index.html).
+
 ## Why it matters
 
 Model cards, README claims, release notes, and agent reports become fragile when
